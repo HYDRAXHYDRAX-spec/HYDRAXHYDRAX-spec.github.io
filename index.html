@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://open.er-api.com https://cdn.jsdelivr.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" />
+  <meta name="theme-color" content="#0f1014" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>OmniCalc — Calculator, Unit Converter &amp; Live World Currency Converter</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="fonts/fonts.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="studio-stage" id="studioStage">
+    <!-- ==========================================
+         COLUMN 1: CALCULATOR
+         ========================================== -->
+    <section class="screen-column is-mobile-active" id="col-calc" data-panel="calc">
+      <header class="frame-caption">
+        <div class="frame-caption-left">
+          <span class="grip-dots" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </span>
+          <span data-i18n="captionCalc">Calculator</span>
+        </div>
+        <div class="frame-caption-right">
+          <button type="button" class="caption-nav-btn" data-action="toggle-single" data-target="calc" data-i18n-title="toggleViewTitle" data-i18n-aria="toggleViewTitle" title="Toggle Studio / Single View" aria-label="Toggle Studio / Single View">&lt;</button>
+          <span class="version-tag" title="OmniCalc Release Candidate">v1.7.0</span>
+          <button type="button" class="caption-nav-btn" data-action="toggle-single" data-target="calc" data-i18n-title="toggleViewTitle" data-i18n-aria="toggleViewTitle" title="Toggle Studio / Single View" aria-label="Toggle Studio / Single View">&gt;</button>
+        </div>
+      </header>
+
+      <div class="device-chassis" id="chassis-calc" tabindex="0" data-i18n-aria="captionCalc" aria-label="Calculator">
+        <div class="device-header">
+          <div class="brand-lockup">
+            <span class="device-logo">OmniCalc</span>
+            <button type="button" class="pro-header-badge" data-open-paywall="header" title="OmniCalc PRO" aria-label="OmniCalc PRO">FREE</button>
+          </div>
+          <div class="header-right-controls">
+            <button type="button" class="lang-switch-btn" data-open-lang-modal="calc" data-i18n-title="langModalTitle" data-i18n-aria="langModalTitle" title="Select Language" aria-label="Select Language">
+              <span class="lang-globe" aria-hidden="true">🌐</span>
+              <span class="lang-code-label" data-current-lang-label>VI</span>
+              <span class="lang-caret" aria-hidden="true">▾</span>
+            </button>
+            <nav class="mode-pills" data-i18n-aria="modeSwitcherLabel" aria-label="Mode Switcher">
+              <button type="button" class="mode-pill is-active" data-switch-panel="calc" data-i18n="navCalc">Calc</button>
+              <button type="button" class="mode-pill" data-switch-panel="units" data-i18n="navUnits">Units</button>
+              <button type="button" class="mode-pill" data-switch-panel="currency" data-i18n="navCurrency">Currency</button>
+            </nav>
+          </div>
+        </div>
+
+        <div class="calc-display-well">
+          <div class="calc-well-top">
+            <button type="button" class="calc-mode-tag" id="calcAngleBtn" data-i18n-title="angleToggleTitle" data-i18n-aria="angleToggleTitle" title="Toggle Degree (DEG) / Radian (RAD)" aria-label="Toggle Degree (DEG) / Radian (RAD)">
+              <span id="calcModeLabel" data-i18n="calcStandard">Standard</span>
+              <span class="calc-angle-badge" id="calcAngleBadge">DEG</span>
+            </button>
+            <div class="calc-well-actions">
+              <button type="button" class="calc-tape-btn" id="openTapeBtn" data-i18n-title="tapeModalTitle" title="Calculation Tape">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                  <path d="M3 3v5h5"></path>
+                  <path d="M12 7v5l4 2"></path>
+                </svg>
+                <span data-i18n="calcTapeBtn">Tape</span>
+              </button>
+              <button type="button" class="calc-inline-back-btn" id="calcInlineBackBtn" data-i18n-title="backspaceLabel" data-i18n-aria="backspaceLabel" title="Backspace" aria-label="Backspace">⌫<span class="calc-back-text" data-i18n="backspaceShort">Xoá</span></button>
+            </div>
+          </div>
+
+          <div class="calc-expr-row">
+            <div class="calc-expression" id="calcExprDisplay">0</div>
+          </div>
+
+          <div class="calc-result" id="calcResultDisplay" data-i18n-title="tapToCopyTitle" title="Tap to copy" hidden>0</div>
+          <div class="calc-live-status">
+            <span class="live-dot"></span>
+            <span id="calcStatusText">Live preview</span>
+          </div>
+        </div>
+
+        <div class="sci-strip" data-i18n-aria="calcScientific" aria-label="Scientific">
+          <button type="button" class="sci-pill" data-sci="sin">sin</button>
+          <button type="button" class="sci-pill" data-sci="cos">cos</button>
+          <button type="button" class="sci-pill" data-sci="tan">tan</button>
+          <button type="button" class="sci-pill" data-sci="log">log</button>
+          <button type="button" class="sci-pill" data-sci="ln">ln</button>
+          <button type="button" class="sci-pill" data-sci="sqrt">√</button>
+          <button type="button" class="sci-pill" data-sci="pow">xʸ</button>
+          <button type="button" class="sci-pill" data-sci="pi">π</button>
+          <button type="button" class="sci-pill" data-sci="e">e</button>
+          <button type="button" class="sci-pill" data-sci="fact">n!</button>
+        </div>
+
+        <div class="calc-spacer"></div>
+
+        <div class="keypad-grid" id="calcKeypad">
+          <button type="button" class="key-btn key-func" id="calcAcKeyBtn" data-calc-key="AC" data-i18n-title="acKeyTitle" title="Tap to delete (C) / Hold to All Clear (AC)">AC</button>
+          <button type="button" class="key-btn key-func" data-calc-key="()">( )</button>
+          <button type="button" class="key-btn key-func" data-calc-key="%">%</button>
+          <button type="button" class="key-btn key-amber" data-calc-key="÷">÷</button>
+
+          <button type="button" class="key-btn" data-calc-key="7">7</button>
+          <button type="button" class="key-btn" data-calc-key="8">8</button>
+          <button type="button" class="key-btn" data-calc-key="9">9</button>
+          <button type="button" class="key-btn key-amber" data-calc-key="×">×</button>
+
+          <button type="button" class="key-btn" data-calc-key="4">4</button>
+          <button type="button" class="key-btn" data-calc-key="5">5</button>
+          <button type="button" class="key-btn" data-calc-key="6">6</button>
+          <button type="button" class="key-btn key-amber" data-calc-key="-">-</button>
+
+          <button type="button" class="key-btn" data-calc-key="1">1</button>
+          <button type="button" class="key-btn" data-calc-key="2">2</button>
+          <button type="button" class="key-btn" data-calc-key="3">3</button>
+          <button type="button" class="key-btn key-amber" data-calc-key="+">+</button>
+
+          <button type="button" class="key-btn key-span-2" data-calc-key="0">0</button>
+          <button type="button" class="key-btn" data-calc-key=".">.</button>
+          <button type="button" class="key-btn key-emerald" data-calc-key="=">=</button>
+        </div>
+
+        <!-- History Tape Drawer -->
+        <div class="chassis-modal" id="tapeModal" role="dialog" aria-modal="true" aria-hidden="true" data-i18n-aria="tapeModalTitle" aria-label="Calculation Tape">
+          <div class="modal-header">
+            <span class="modal-title" data-i18n="tapeModalTitle">Calculation Tape</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button type="button" class="modal-export-btn" id="exportTapeBtn" data-i18n="exportCsvBtn" data-i18n-title="exportCsvBtn" title="Export CSV">Export CSV</button>
+              <button type="button" class="modal-close-btn" id="clearTapeBtn" data-i18n="clearBtn">Clear</button>
+              <button type="button" class="modal-close-btn" id="closeTapeBtn" data-i18n="doneBtn">Done</button>
+            </div>
+          </div>
+          <div class="tape-limit-banner" id="tapeLimitBanner"></div>
+          <div class="modal-list" id="tapeList"></div>
+        </div>
+
+        <!-- Language Selector Modal (Column 1) -->
+        <div class="chassis-modal lang-chassis-modal" data-lang-modal="calc" role="dialog" aria-modal="true" aria-hidden="true" data-i18n-aria="langModalTitle" aria-label="Select Language">
+          <div class="modal-header">
+            <span class="modal-title" data-i18n="langModalTitle">Select Language</span>
+            <button type="button" class="modal-close-btn" data-close-lang-modal data-i18n="doneBtn">Done</button>
+          </div>
+          <div class="modal-list lang-modal-list" data-lang-list></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         COLUMN 2: UNIT CONVERTER
+         ========================================== -->
+    <section class="screen-column" id="col-units" data-panel="units">
+      <header class="frame-caption">
+        <div class="frame-caption-left">
+          <span class="grip-dots" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </span>
+          <span data-i18n="captionUnits">Unit Converter</span>
+        </div>
+        <div class="frame-caption-right">
+          <button type="button" class="caption-nav-btn" data-action="toggle-single" data-target="units" data-i18n-title="toggleViewTitle" data-i18n-aria="toggleViewTitle" title="Toggle Studio / Single View" aria-label="Toggle Studio / Single View">&lt;</button>
+          <span class="version-tag" title="OmniCalc Release Candidate">v1.7.0</span>
+          <button type="button" class="caption-nav-btn" data-action="toggle-single" data-target="units" data-i18n-title="toggleViewTitle" data-i18n-aria="toggleViewTitle" title="Toggle Studio / Single View" aria-label="Toggle Studio / Single View">&gt;</button>
+        </div>
+      </header>
+
+      <div class="device-chassis" id="chassis-units" tabindex="0" data-i18n-aria="captionUnits" aria-label="Unit Converter">
+        <div class="device-header">
+          <div class="brand-lockup">
+            <span class="device-logo">OmniCalc</span>
+            <button type="button" class="pro-header-badge" data-open-paywall="header" title="OmniCalc PRO" aria-label="OmniCalc PRO">FREE</button>
+          </div>
+          <div class="header-right-controls">
+            <button type="button" class="lang-switch-btn" data-open-lang-modal="units" data-i18n-title="langModalTitle" data-i18n-aria="langModalTitle" title="Select Language" aria-label="Select Language">
+              <span class="lang-globe" aria-hidden="true">🌐</span>
+              <span class="lang-code-label" data-current-lang-label>VI</span>
+              <span class="lang-caret" aria-hidden="true">▾</span>
+            </button>
+            <nav class="mode-pills" data-i18n-aria="modeSwitcherLabel" aria-label="Mode Switcher">
+              <button type="button" class="mode-pill" data-switch-panel="calc" data-i18n="navCalc">Calc</button>
+              <button type="button" class="mode-pill is-active" data-switch-panel="units" data-i18n="navUnits">Units</button>
+              <button type="button" class="mode-pill" data-switch-panel="currency" data-i18n="navCurrency">Currency</button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Category Strip -->
+        <div class="category-strip" id="unitCategoryStrip" data-i18n-aria="captionUnits" aria-label="Unit Categories"></div>
+
+        <!-- FROM / TO Stack -->
+        <div class="unit-cards-stack">
+          <div class="unit-card unit-card-from">
+            <div class="unit-card-header">
+              <span class="unit-dir-label" data-i18n="unitFromLabel">FROM</span>
+              <button type="button" class="unit-selector-btn" id="unitFromPickerBtn">
+                <span id="unitFromName">Centimeter (cm)</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+            <div class="unit-value-readout" id="unitFromValue">0</div>
+          </div>
+
+          <button type="button" class="unit-swap-btn" id="unitSwapBtn" data-i18n-title="swapUnitsTitle" data-i18n-aria="swapUnitsTitle" title="Swap units" aria-label="Swap units">
+            ↓↑
+          </button>
+
+          <div class="unit-card unit-card-to">
+            <div class="unit-card-header">
+              <span class="unit-dir-label" data-i18n="unitToLabel">TO</span>
+              <button type="button" class="unit-selector-btn" id="unitToPickerBtn">
+                <span id="unitToName">Inch (in)</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+            <div class="unit-value-readout" id="unitToValue" data-i18n-title="tapToCopyTitle" title="Tap to copy">0</div>
+            <div class="unit-formula-line">
+              <span class="live-dot"></span>
+              <span id="unitFormulaText">1 cm = 0.393701 in</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- All Equivalents -->
+        <div class="section-subhead">
+          <span class="section-subhead-title" id="equivSectionTitle">All length equivalents</span>
+          <span class="section-subhead-meta" id="equivSectionMeta">175 cm</span>
+        </div>
+
+        <div class="equivalents-card" id="equivalentsList"></div>
+
+        <!-- Fixed 5-Row Unit Keypad -->
+        <div class="keypad-grid keypad-compact" id="unitKeypad">
+          <button type="button" class="key-btn key-func" data-unit-key="AC">AC</button>
+          <button type="button" class="key-btn key-func" data-unit-key="±">±</button>
+          <button type="button" class="key-btn key-func" data-unit-key="%">%</button>
+          <button type="button" class="key-btn key-amber" data-unit-key="BACK" data-i18n-title="backspaceLabel" data-i18n-aria="backspaceLabel" title="Backspace" aria-label="Backspace">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+              <line x1="18" y1="9" x2="12" y2="15"></line>
+              <line x1="12" y1="9" x2="18" y2="15"></line>
+            </svg>
+          </button>
+
+          <button type="button" class="key-btn" data-unit-key="7">7</button>
+          <button type="button" class="key-btn" data-unit-key="8">8</button>
+          <button type="button" class="key-btn" data-unit-key="9">9</button>
+          <button type="button" class="key-btn key-unit-tag is-active-unit" id="quickUnitBtn1" data-unit-key="QUICK1">cm</button>
+
+          <button type="button" class="key-btn" data-unit-key="4">4</button>
+          <button type="button" class="key-btn" data-unit-key="5">5</button>
+          <button type="button" class="key-btn" data-unit-key="6">6</button>
+          <button type="button" class="key-btn key-unit-tag" id="quickUnitBtn2" data-unit-key="QUICK2">in</button>
+
+          <button type="button" class="key-btn" data-unit-key="1">1</button>
+          <button type="button" class="key-btn" data-unit-key="2">2</button>
+          <button type="button" class="key-btn" data-unit-key="3">3</button>
+          <button type="button" class="key-btn key-emerald" data-unit-key="=">=</button>
+
+          <button type="button" class="key-btn key-span-2" data-unit-key="0">0</button>
+          <button type="button" class="key-btn" data-unit-key=".">.</button>
+          <button type="button" class="key-btn key-func" data-unit-key="SWAP" data-i18n-title="swapUnitsTitle" data-i18n-aria="swapUnitsTitle" title="Swap units" aria-label="Swap units">↓↑</button>
+        </div>
+
+        <!-- Unit Picker Modal -->
+        <div class="chassis-modal" id="unitPickerModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="unitModalTitle">
+          <div class="modal-header">
+            <span class="modal-title" id="unitModalTitle">Select Unit</span>
+            <button type="button" class="modal-close-btn" id="closeUnitModalBtn" data-i18n="doneBtn">Done</button>
+          </div>
+          <div class="modal-search-box">
+            <svg class="modal-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="modal-search-input" id="unitSearchInput" placeholder="Search unit (e.g. cm, inch, lượng, chỉ, kg)..." />
+          </div>
+          <div class="modal-list" id="unitModalList"></div>
+        </div>
+
+        <!-- Language Selector Modal (Column 2) -->
+        <div class="chassis-modal lang-chassis-modal" data-lang-modal="units" role="dialog" aria-modal="true" aria-hidden="true" data-i18n-aria="langModalTitle" aria-label="Select Language">
+          <div class="modal-header">
+            <span class="modal-title" data-i18n="langModalTitle">Select Language</span>
+            <button type="button" class="modal-close-btn" data-close-lang-modal data-i18n="doneBtn">Done</button>
+          </div>
+          <div class="modal-list lang-modal-list" data-lang-list></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         COLUMN 3: CURRENCY CONVERTER
+         ========================================== -->
+    <section class="screen-column" id="col-currency" data-panel="currency">
+      <header class="frame-caption">
+        <div class="frame-caption-left">
+          <span class="grip-dots" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </span>
+          <span data-i18n="captionCurrency">Currency Converter</span>
+        </div>
+        <div class="frame-caption-right">
+          <button type="button" class="caption-nav-btn" data-action="toggle-single" data-target="currency" data-i18n-title="toggleViewTitle" data-i18n-aria="toggleViewTitle" title="Toggle Studio / Single View" aria-label="Toggle Studio / Single View">&lt;</button>
+          <span class="version-tag" title="OmniCalc Release Candidate">v1.7.0</span>
+          <button type="button" class="caption-nav-btn" data-action="toggle-single" data-target="currency" data-i18n-title="toggleViewTitle" data-i18n-aria="toggleViewTitle" title="Toggle Studio / Single View" aria-label="Toggle Studio / Single View">&gt;</button>
+        </div>
+      </header>
+
+      <div class="device-chassis" id="chassis-currency" tabindex="0" data-i18n-aria="captionCurrency" aria-label="Currency Converter">
+        <div class="device-header">
+          <div class="brand-lockup">
+            <span class="device-logo">OmniCalc</span>
+            <button type="button" class="pro-header-badge" data-open-paywall="header" title="OmniCalc PRO" aria-label="OmniCalc PRO">FREE</button>
+          </div>
+          <div class="header-right-controls">
+            <button type="button" class="lang-switch-btn" data-open-lang-modal="currency" data-i18n-title="langModalTitle" data-i18n-aria="langModalTitle" title="Select Language" aria-label="Select Language">
+              <span class="lang-globe" aria-hidden="true">🌐</span>
+              <span class="lang-code-label" data-current-lang-label>VI</span>
+              <span class="lang-caret" aria-hidden="true">▾</span>
+            </button>
+            <nav class="mode-pills" data-i18n-aria="modeSwitcherLabel" aria-label="Mode Switcher">
+              <button type="button" class="mode-pill" data-switch-panel="calc" data-i18n="navCalc">Calc</button>
+              <button type="button" class="mode-pill" data-switch-panel="units" data-i18n="navUnits">Units</button>
+              <button type="button" class="mode-pill is-active" data-switch-panel="currency" data-i18n="navCurrency">Currency</button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Live Market Rates Bar -->
+        <div class="market-status-pill">
+          <div class="market-status-text">
+            <span class="live-dot"></span>
+            <span id="marketStatusLabel">Market rates live · Updated just now</span>
+          </div>
+          <button type="button" class="market-refresh-btn" id="refreshRatesBtn" data-i18n-title="refreshRatesTitle" data-i18n-aria="refreshRatesTitle" title="Refresh exchange rates" aria-label="Refresh exchange rates">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Base Currency Card with Travel Tax-Free & Card Fee Strip -->
+        <div class="currency-base-card" id="currencyBaseCard">
+          <div class="currency-base-top">
+            <button type="button" class="currency-picker-pill" id="baseCurrencyBtn" data-i18n-title="currencyModalTitle" title="Currencies, Crypto &amp; Gold">
+              <span id="baseCurrencyFlagWrap"></span>
+              <span id="baseCurrencyCode">USD</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+
+            <div class="bank-fee-pills" id="bankFeeStrip" data-i18n-aria="customFeeModalTitle" aria-label="Travel Tax-Free and Card Fee">
+              <button type="button" class="fee-pill is-active" data-fee="0" id="feePill0">0%</button>
+              <button type="button" class="fee-pill" data-fee="-10" id="feePillTax">-10% Tax</button>
+              <button type="button" class="fee-pill" data-fee="2.5" id="feePillCard">+2.5% Card</button>
+              <button type="button" class="fee-pill" data-fee="custom" id="feePillCustom">Custom %</button>
+            </div>
+          </div>
+
+          <div class="currency-expr-readout" id="currencyExprDisplay" data-i18n-title="tapToCopyTitle" title="Tap to copy">
+            <span class="expr-head">0</span><span class="expr-tail"></span>
+          </div>
+
+          <div class="currency-base-bottom">
+            <span class="base-currency-label" id="baseCurrencyEvalHint">= $0.00</span>
+            <div class="currency-base-subrate" id="currencyBaseSubrate">
+              1 USD = 25,430.00 VND · 0.9213 EUR
+            </div>
+          </div>
+        </div>
+
+        <!-- Pinned Comparisons -->
+        <div class="section-subhead">
+          <span class="section-subhead-title" id="pinnedHeaderTitle">Pinned comparisons</span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button type="button" class="section-action-link" id="openAllCurrenciesBtn" data-i18n="editBtn">Edit</button>
+          </div>
+        </div>
+
+        <p class="pinned-hint" id="pinnedTapHint"></p>
+
+        <div class="pinned-list-card" id="pinnedCurrencyList"></div>
+
+        <!-- Fixed 5-Row Currency Keypad -->
+        <div class="keypad-grid keypad-currency" id="currencyKeypad">
+          <button type="button" class="key-btn key-func" data-curr-key="AC">AC</button>
+          <button type="button" class="key-btn key-func" data-curr-key="()">( )</button>
+          <button type="button" class="key-btn key-func" data-curr-key="%">%</button>
+          <button type="button" class="key-btn key-amber" data-curr-key="÷">÷</button>
+
+          <button type="button" class="key-btn" data-curr-key="7">7</button>
+          <button type="button" class="key-btn" data-curr-key="8">8</button>
+          <button type="button" class="key-btn" data-curr-key="9">9</button>
+          <button type="button" class="key-btn key-amber" data-curr-key="×">×</button>
+
+          <button type="button" class="key-btn" data-curr-key="4">4</button>
+          <button type="button" class="key-btn" data-curr-key="5">5</button>
+          <button type="button" class="key-btn" data-curr-key="6">6</button>
+          <button type="button" class="key-btn key-amber" data-curr-key="-">-</button>
+
+          <button type="button" class="key-btn" data-curr-key="1">1</button>
+          <button type="button" class="key-btn" data-curr-key="2">2</button>
+          <button type="button" class="key-btn" data-curr-key="3">3</button>
+          <button type="button" class="key-btn key-amber" data-curr-key="+">+</button>
+
+          <button type="button" class="key-btn" data-curr-key="0">0</button>
+          <button type="button" class="key-btn" data-curr-key=".">.</button>
+          <button type="button" class="key-btn key-func" data-curr-key="BACK" data-i18n-title="backspaceLabel" data-i18n-aria="backspaceLabel" title="Backspace" aria-label="Backspace">⌫</button>
+          <button type="button" class="key-btn key-emerald" data-curr-key="=">=</button>
+        </div>
+
+        <!-- Custom Tax / Fee / Discount Modal -->
+        <div class="chassis-modal" id="customFeeModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="customFeeModalTitle">
+          <div class="modal-header">
+            <span class="modal-title" id="customFeeModalTitle">Travel Tax-Free &amp; Card Fee (%)</span>
+            <button type="button" class="modal-close-btn" id="closeCustomFeeModalBtn" data-i18n="doneBtn">Done</button>
+          </div>
+          <div class="custom-fee-body">
+            <p class="custom-fee-hint" id="customFeeHintText">
+              Nhập số âm (vd: <code>-8</code>, <code>-10</code>) để tính Hoàn thuế / Giảm giá, hoặc số dương (vd: <code>+2.5</code>, <code>+3.5</code>) để cộng phí thẻ ngân hàng (-90% đến +50%).
+            </p>
+            <div class="custom-fee-input-row">
+              <input type="number" step="0.1" min="-90" max="50" class="modal-search-input custom-fee-input" id="customFeeNumberInput" placeholder="e.g. -8 or 2.8" />
+              <button type="button" class="custom-fee-apply-btn" id="applyCustomFeeBtn">Apply %</button>
+            </div>
+            <div class="custom-fee-presets-label" id="customFeePresetsLabel">Quick Presets:</div>
+            <div class="custom-fee-presets" id="customFeePresetsGrid">
+              <button type="button" class="preset-chip preset-emerald" data-preset-fee="-8">-8% Tax (JP)</button>
+              <button type="button" class="preset-chip preset-emerald" data-preset-fee="-10">-10% Tax (KR/SG)</button>
+              <button type="button" class="preset-chip preset-emerald" data-preset-fee="-12">-12% Tax (EU)</button>
+              <button type="button" class="preset-chip preset-emerald" data-preset-fee="-20">-20% Sale</button>
+              <button type="button" class="preset-chip preset-amber" data-preset-fee="1.5">+1.5% Card</button>
+              <button type="button" class="preset-chip preset-amber" data-preset-fee="2.5">+2.5% Visa/MC</button>
+              <button type="button" class="preset-chip preset-amber" data-preset-fee="3.5">+3.5% Bank FX</button>
+              <button type="button" class="preset-chip" data-preset-fee="0">0% Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full World Currency + Crypto/Gold Directory Modal -->
+        <div class="chassis-modal" id="currencyModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="currencyModalTitle">
+          <div class="modal-header">
+            <span class="modal-title" id="currencyModalTitle">Currencies, Crypto &amp; Gold</span>
+            <button type="button" class="modal-close-btn" id="closeCurrencyModalBtn" data-i18n="doneBtn">Done</button>
+          </div>
+          <div class="modal-search-box">
+            <svg class="modal-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="modal-search-input" id="currencySearchInput" placeholder="Search BTC, XAU, Lượng, VND, USD..." />
+          </div>
+          <div class="modal-list" id="currencyModalList"></div>
+        </div>
+
+        <!-- Language Selector Modal (Column 3) -->
+        <div class="chassis-modal lang-chassis-modal" data-lang-modal="currency" role="dialog" aria-modal="true" aria-hidden="true" data-i18n-aria="langModalTitle" aria-label="Select Language">
+          <div class="modal-header">
+            <span class="modal-title" data-i18n="langModalTitle">Select Language</span>
+            <button type="button" class="modal-close-btn" data-close-lang-modal data-i18n="doneBtn">Done</button>
+          </div>
+          <div class="modal-list lang-modal-list" data-lang-list></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================
+       OMNICALC PRO PAYWALL MODAL ("TRAVELER & TRADER PASS" - 4 PLANS)
+       ========================================== -->
+  <div class="paywall-backdrop" id="proPaywallModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="paywallTitle">
+    <div class="paywall-sheet">
+      <div class="paywall-header">
+        <div class="paywall-brand">
+          <span class="paywall-logo" id="paywallTitle">OmniCalc</span>
+          <span class="paywall-pro-pill">PRO</span>
+          <span class="paywall-trust-pill" id="paywallTrustPill">Traveler &amp; Trader Pass</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="closePaywallBtn" data-i18n-title="doneBtn" data-i18n-aria="doneBtn" title="Close" aria-label="Close">✕</button>
+      </div>
+
+      <p class="paywall-subtitle" id="paywallReasonText">
+        Traveler &amp; Trader Pass — Mở khóa toàn bộ sức mạnh tài chính, Vàng Lượng/Ounce, Crypto &amp; Hoàn thuế du lịch.
+      </p>
+
+      <ul class="paywall-checklist">
+        <li>
+          <span class="check-icon">✨</span>
+          <div>
+            <strong id="pwCheck0Title">100% Không Quảng Cáo (Ad-Free)</strong>
+            <span id="pwCheck0Desc">Trải nghiệm tính toán liền mạch, sạch sẽ, không gián đoạn</span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">♾️</span>
+          <div>
+            <strong id="pwCheck1Title">Ghim không giới hạn ngoại tệ cùng lúc</strong>
+            <span id="pwCheck1Desc">So sánh 10+ ngoại tệ đồng thời (Bản Free: tối đa 3)</span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">🪙</span>
+          <div>
+            <strong id="pwCheck2Title">Tỷ giá Crypto &amp; Vàng Lượng / Ounce (XAU)</strong>
+            <span id="pwCheck2Desc">Mở khóa <code>BTC</code>, <code>ETH</code>, <code>USDT</code>, <code>SOL</code>, <code>XAU/oz</code> &amp; <code>Lượng Vàng</code></span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">💳</span>
+          <div>
+            <strong id="pwCheck3Title">Hoàn thuế Tax-Free (-10%) &amp; Phí thẻ (+2.5%)</strong>
+            <span id="pwCheck3Desc">Tính ngay giá sau hoàn thuế sân bay hoặc phí ẩn thẻ Visa/Mastercard</span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">⚡</span>
+          <div>
+            <strong id="pwCheck4Title">Đồng bộ Real-time &amp; Offline Travel Mode</strong>
+            <span id="pwCheck4Desc">Làm mới tỷ giá tức thì không chờ 6h &amp; dùng mượt trên máy bay</span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">📄</span>
+          <div>
+            <strong id="pwCheck5Title">Lưu lịch sử Tape vĩnh viễn &amp; Xuất báo cáo CSV/TXT</strong>
+            <span id="pwCheck5Desc">Không giới hạn 10 phép tính, xuất bảng kê chi tiêu chỉ 1 chạm</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="pricing-cards" id="pricingCardsGroup">
+        <!-- 1. Travel Pass (14 Days) -->
+        <button type="button" class="pricing-card" data-plan-id="travel_pass">
+          <span class="pricing-ribbon ribbon-amber" id="pwRibbonTravel">HOT CHO DU LỊCH</span>
+          <div class="pricing-card-left">
+            <span class="pricing-name" id="pwPlanTravelName">✈️ Travel Pass (14 Ngày)</span>
+            <span class="pricing-desc" id="pwPlanTravelDesc">Chỉ ~1.700đ/ngày · Không tự động gia hạn</span>
+          </div>
+          <div class="pricing-card-right">
+            <span class="pricing-price" id="pwPlanTravelPrice">25.000đ</span>
+            <span class="pricing-usd" id="pwPlanTravelSub">$0.99 / 14d</span>
+          </div>
+        </button>
+
+        <!-- 2. PRO Monthly (1 Month) -->
+        <button type="button" class="pricing-card" data-plan-id="pro_monthly">
+          <div class="pricing-card-left">
+            <span class="pricing-name" id="pwPlanMonthlyName">⚡ PRO Monthly (1 Tháng)</span>
+            <span class="pricing-desc" id="pwPlanMonthlyDesc">Gia hạn tự động hàng tháng · Hủy bất kỳ lúc nào</span>
+          </div>
+          <div class="pricing-card-right">
+            <span class="pricing-price" id="pwPlanMonthlyPrice">49.000đ</span>
+            <span class="pricing-usd" id="pwPlanMonthlySub">$1.99 / tháng</span>
+          </div>
+        </button>
+
+        <!-- 3. PRO 1 Year (1 Năm) -->
+        <button type="button" class="pricing-card" data-plan-id="pro_yearly">
+          <div class="pricing-card-left">
+            <span class="pricing-name" id="pwPlanYearlyName">📅 PRO 1 Year (1 Năm)</span>
+            <span class="pricing-desc" id="pwPlanYearlyDesc">Thanh toán theo năm · Gia hạn mỗi 12 tháng</span>
+          </div>
+          <div class="pricing-card-right">
+            <span class="pricing-price" id="pwPlanYearlyPrice">249.000đ</span>
+            <span class="pricing-usd" id="pwPlanYearlySub">$9.99 / năm</span>
+          </div>
+        </button>
+
+        <!-- 4. PRO Lifetime (Hero - Default Selected) -->
+        <button type="button" class="pricing-card pricing-card--hero is-selected" data-plan-id="pro_lifetime">
+          <span class="pricing-ribbon ribbon-hero" id="pwRibbonLifetime">BEST VALUE - TRẢ 1 LẦN DÙNG MÃI MÃI</span>
+          <div class="pricing-card-left">
+            <span class="pricing-name" id="pwPlanLifetimeName">👑 PRO Lifetime (Trọn đời)</span>
+            <span class="pricing-desc" id="pwPlanLifetimeDesc">Thanh toán 1 lần duy nhất · Sở hữu vĩnh viễn</span>
+          </div>
+          <div class="pricing-card-right">
+            <span class="pricing-price" id="pwPlanLifetimePrice">379.000đ</span>
+            <span class="pricing-usd" id="pwPlanLifetimeSub">$14.99 trọn đời</span>
+          </div>
+        </button>
+      </div>
+
+      <p class="paywall-price-note" id="pwPriceDisclaimer" data-i18n="pwPriceDisclaimer">Giá hiển thị mang tính tham khảo; giá chính xác do Google Play xác nhận tại bước thanh toán.</p>
+
+      <button type="button" class="paywall-cta-btn" id="activateProBtn">
+        Mở khóa PRO Trọn Đời — 379.000đ
+      </button>
+
+      <div class="paywall-footer">
+        <div class="paywall-footer-links">
+          <button type="button" class="footer-link-btn" id="restorePurchasesBtn" data-i18n="restorePurchases">Khôi phục giao dịch</button>
+          <span class="footer-sep">·</span>
+          <button type="button" class="footer-link-btn" id="manageSubBtn" data-i18n="manageSubscription">Quản lý gói</button>
+          <span class="footer-sep">·</span>
+          <button type="button" class="footer-link-btn" id="privacyOptionsBtn" data-i18n="privacyOptions">Quyền riêng tư</button>
+          <span class="footer-sep">·</span>
+          <a href="privacy.html" class="footer-link-btn" data-i18n="privacyPolicy">Chính sách</a>
+          <span class="footer-sep">·</span>
+          <a href="terms.html" class="footer-link-btn">Điều khoản / Terms</a>
+        </div>
+        <div class="paywall-status-line">
+          <span id="currentProStatusText">Trạng thái hiện tại: Bản FREE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ergonomic Mobile Thumb-Zone Bottom Tab Dock -->
+  <nav class="mobile-thumb-dock" id="mobileThumbDock" data-i18n-aria="modeSwitcherLabel" aria-label="Mode Switcher">
+    <button type="button" class="thumb-dock-btn is-active" data-switch-panel="calc">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+      <span data-i18n="navCalc">Calc</span>
+    </button>
+    <button type="button" class="thumb-dock-btn" data-switch-panel="units">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3v18"/><path d="m12 8 5-5 5 5"/><path d="M7 21V3"/><path d="m2 16 5 5 5-5"/></svg>
+      <span data-i18n="navUnits">Units</span>
+    </button>
+    <button type="button" class="thumb-dock-btn" data-switch-panel="currency">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+      <span data-i18n="navCurrency">Currency</span>
+    </button>
+  </nav>
+
+  <!-- ==========================================
+       ADMIN PANEL (ẩn — mở bằng 5 lần chạm logo OmniCalc + mã PIN)
+       ========================================== -->
+  <!-- Bảng lựa chọn khi bấm làm mới tỷ giá (bản Free): mua PRO hoặc xem quảng cáo -->
+  <div class="choice-backdrop" id="refreshChoiceModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="refreshChoiceTitle">
+    <div class="choice-card">
+      <h3 class="choice-title" id="refreshChoiceTitle">Cập nhật tỷ giá ngay</h3>
+      <p class="choice-desc" id="refreshChoiceDesc"></p>
+      <button type="button" class="choice-btn choice-btn-pro" id="refreshChoicePro">Nâng cấp PRO</button>
+      <button type="button" class="choice-btn choice-btn-ad" id="refreshChoiceAd">Xem quảng cáo</button>
+      <button type="button" class="choice-later" id="refreshChoiceLater">Để sau</button>
+    </div>
+  </div>
+
+  <div class="admin-backdrop" id="adminPanel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+    <div class="admin-sheet">
+      <div class="admin-header">
+        <span class="admin-title" id="adminTitle">👑 OmniCalc Admin</span>
+        <button type="button" class="admin-close-btn" id="adminCloseBtn" aria-label="Đóng">✕</button>
+      </div>
+
+      <!-- Màn hình nhập PIN -->
+      <div class="admin-gate" id="adminGate">
+        <p class="admin-hint">Nhập mã PIN để mở bảng điều khiển Admin.</p>
+        <input type="password" inputmode="numeric" maxlength="8" class="admin-input" id="adminPinInput" placeholder="••••" autocomplete="off" />
+        <button type="button" class="admin-btn admin-btn-primary" id="adminUnlockBtn">Mở khóa</button>
+        <p class="admin-error" id="adminError" role="alert"></p>
+      </div>
+
+      <!-- Bảng điều khiển (ẩn cho tới khi PIN đúng) -->
+      <div class="admin-body" id="adminBody" hidden>
+        <div class="admin-row">
+          <span class="admin-label">Trạng thái PRO</span>
+          <button type="button" class="admin-btn" id="adminToggleProBtn">Đang kiểm tra…</button>
+        </div>
+        <p class="admin-note" id="adminProNote"></p>
+
+        <div class="admin-row">
+          <span class="admin-label">Tỷ giá ngoại tệ</span>
+          <button type="button" class="admin-btn" id="adminRefreshRatesBtn">Làm mới ngay (bỏ qua chờ 6h)</button>
+        </div>
+
+        <div class="admin-row">
+          <span class="admin-label">Dữ liệu</span>
+          <button type="button" class="admin-btn admin-btn-danger" id="adminResetBtn">Xoá toàn bộ dữ liệu &amp; khởi động lại</button>
+        </div>
+
+        <div class="admin-info" id="adminInfo"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="omni-toast" id="omniToast" role="status" aria-live="polite"></div>
+
+  <script src="calc-engine.js"></script>
+  <script src="affiliates.js"></script>
+  <script src="data.js"></script>
+  <script src="unit-names-i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
